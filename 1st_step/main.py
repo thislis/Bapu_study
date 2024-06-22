@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends,HTTPException
+from fastapi import FastAPI, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 from pydantic import BaseModel
@@ -26,7 +26,7 @@ class Menu_Res(BaseModel):
 
 
 @app.post("/api/set/bap")
-async def set_bap(request: Bap_Req, db: Session = Depends(get_db)):
+async def set_bap(request: Bap_req, db: Session = Depends(get_db)):
     for menu_name in request.menus:
         menu = models.Menu(rest_name=request.rest_name, menu_name=menu_name)
         db.add(menu)
@@ -38,8 +38,4 @@ async def get_bap(rest_name: str, db: Session = Depends(get_db)):
     if not menus:
         raise HTTPException(status_code=404, detail="Restaurant doesn't exist")
     menu_names = [menu.menu_name for menu in menus]
-    return MenuResponse(menus=menu_names)
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    return Menu_Res(menus=menu_names)

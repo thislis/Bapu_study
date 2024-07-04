@@ -37,11 +37,11 @@ class Menu_Res(BaseModel):
 @app.post("/api/set/bap")
 async def set_bap(request: Bap_req, db: Session = Depends(get_db)):
     for menu_name in request.menus:
-        menu = models.Menu(rest_name=request.rest_name, menu_name=menu_name)
+        menu = models.Menu(date=request.date, meal_type=request.meal_type, rest_name=request.rest_name, menu_name=menu_name)
         db.add(menu)
     db.commit()
 
-@app.get("/api/get/bap/{rest_name}", response_model=Menu_Res)
+@app.get("/api/get/bap/{start_time}/{end_time}", response_model=Menu_Res)
 async def get_bap(rest_name: str, db: Session = Depends(get_db)):
     menus = db.query(models.Menu).filter(models.Menu.rest_name == rest_name).all()
     if not menus:

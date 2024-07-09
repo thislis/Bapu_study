@@ -42,9 +42,9 @@ async def set_bap(request: Bap_req, db: Session = Depends(get_db)):
     db.commit()
 
 @app.get("/api/get/bap/{start_time}/{end_time}", response_model=Menu_Res)
-async def get_bap(rest_name: str, db: Session = Depends(get_db)):
-    menus = db.query(models.Menu).filter(models.Menu.rest_name == rest_name).all()
+async def get_bap(start_time: str, end_time: str, db: Session = Depends(get_db)):
+    menus = db.query(models.Menu).filter(models.Menu.date >= start_time and models.Menu.date <= end_time).all()
     if not menus:
-        raise HTTPException(status_code=404, detail="Restaurant doesn't exist")
-    menu_names = [menu.menu_name for menu in menus]
+        raise HTTPException(status_code=404, detail="밥 없음")
+    menu_names = [menu for menu in menus]
     return Menu_Res(menus=menu_names)
